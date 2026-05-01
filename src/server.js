@@ -16,11 +16,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // API routes
 app.use('/api/chat', chatRoute);
 
-// Fallback: serve index.html for any unmatched route
+// Fallback: serve index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ VoteWise server running at http://localhost:${PORT}`);
+// 🔑 CRITICAL FIX HERE
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ VoteWise server running on port ${PORT}`);
 });
