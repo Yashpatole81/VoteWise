@@ -23,7 +23,7 @@ The system utilizes a **Node.js and Express** backend that serves a lightweight,
 The intelligence of VoteWise stems from a hybrid approach:
 - **Context-Awareness Layer**: The system first captures essential user attributes, including age, geographic location (State/UT), and current registration status.
 - **Rule-Based Decision Engine**: Before reaching the AI, user data passes through a logical layer that determines the user's primary "persona" (e.g., ineligible minor, unregistered eligible adult, or registered voter).
-- **Intelligent Response Generation**: Using the **NVIDIA NIM API (Llama 3.3 70B)**, the system synthesizes the user context and logical state into natural language responses. This ensures that instructions are not only accurate but also easy to understand.
+- **Intelligent Response Generation**: Using the **Google Gemini 1.5 Flash API**, the system synthesizes the user context and logical state into natural language responses. This ensures that instructions are not only accurate but also easy to understand.
 
 ### Cloud Integration
 The platform integrates **Google Cloud Services** for reliable hosting and **Firebase** for secure data management and authentication. This ensures that user sessions are persistent and that the system can scale to meet regional demands.
@@ -37,7 +37,7 @@ VoteWise follows a streamlined, user-centric flow to provide immediate value:
 1.  **Context Input**: The user provides basic details (age, state, registration status) via an intuitive onboarding interface.
 2.  **Logic Evaluation**: The decision engine evaluates the input. For example, if a user is 21 and unregistered, the system identifies "Registration Assistance" as the priority.
 3.  **Prompt Synthesis**: The system constructs a structured prompt containing the user’s specific context, legal requirements for their state, and the desired goal.
-4.  **AI Inference**: The **Llama 3.3 70B model via NVIDIA API** processes the prompt and generates a step-by-step guide, such as "How to fill Form 6 on the National Voters' Service Portal."
+4.  **AI Inference**: The **Google Gemini 1.5 Flash API** processes the prompt and generates a step-by-step guide, such as "How to fill Form 6 on the National Voters' Service Portal."
 5.  **Dynamic UI Delivery**: The response is streamed in real-time to the user interface, presenting the information in digestible, numbered steps with clear calls to action.
 
 ---
@@ -63,12 +63,16 @@ To ensure the reliability and focus of the application, the following assumption
    npm install
    ```
 3. **Configure environment**:
-   Create a `.env` file based on `.env.example` and add your `NVIDIA_API_KEY`.
+   Create a `.env` file based on `.env.example` and add your `GOOGLE_API_KEY`.
 4. **Start the server**:
    ```bash
    npm run dev
    ```
-5. **Access the app**: Open `http://localhost:8080` in your browser.
+5. **Run tests**:
+   ```bash
+   npm test
+   ```
+6. **Access the app**: Open `http://localhost:8080` in your browser.
 
 ### Docker Deployment
 1. **Build the image**:

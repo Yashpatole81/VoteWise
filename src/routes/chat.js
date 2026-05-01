@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
-const NVIDIA_API_URL = process.env.NVIDIA_BASE_URL ? `${process.env.NVIDIA_BASE_URL}/chat/completions` : 'https://integrate.api.nvidia.com/v1/chat/completions';
-const MODEL = process.env.MODEL_NAME || 'meta/llama-3.3-70b-instruct';
+const { VertexAI } = require('@google-cloud/vertexai');
 
 /**
  * Build a system prompt based on user context (decision engine)
@@ -65,22 +63,25 @@ Always address the user by their name (${name || 'voter'}) in your first respons
 router.post('/', async (req, res) => {
   const { messages = [], context = {} } = req.body;
 
-  if (!process.env.NVIDIA_API_KEY) {
-    return res.status(500).json({ error: 'NVIDIA_API_KEY is not configured on the server.' });
-  }
+  // Vertex AI initialization
+  // It automatically uses Application Default Credentials (ADC)
+  const project = process.env.GOOGLE_PROJECT_ID || '770048872917';
+  const location = process.env.GOOGLE_LOCATION || 'us-central1';
+  
+  const vertexAI = new VertexAI({ project: project, location: location });
+  const model = vertexAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+  });
 
   const systemPrompt = buildSystemPrompt(context);
 
-  const payload = {
-    model: MODEL,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      ...messages,
-    ],
-    temperature: 0.6,
-    max_tokens: 512,
-    stream: true,
-  };
+  // Convert history to Vertex AI format
+  const history = messages.slice(0, -1).map(m => ({
+    role: m.role === 'user' ? 'user' : 'model',
+    parts: [{ text: m.content }],
+  }));
+
+  const userMessage = messages[messages.length - 1]?.content || 'Hello';
 
   // Set SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
@@ -89,51 +90,25 @@ router.post('/', async (req, res) => {
   res.flushHeaders();
 
   try {
-    const response = await fetch(NVIDIA_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`,
-      },
-      body: JSON.stringify(payload),
+    const chat = model.startChat({
+      history: history,
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      res.write(`data: ${JSON.stringify({ error: `NVIDIA API error: ${err}` })}\n\n`);
-      return res.end();
-    }
+    // Vertex AI streaming
+    const streamingResult = await chat.sendMessageStream([
+        { text: systemPrompt + "\n\nUser Question: " + userMessage }
+    ]);
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n').filter((l) => l.trim());
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') {
-            res.write('data: [DONE]\n\n');
-          } else {
-            try {
-              const parsed = JSON.parse(data);
-              const token = parsed.choices?.[0]?.delta?.content;
-              if (token) {
-                res.write(`data: ${JSON.stringify({ token })}\n\n`);
-              }
-            } catch {
-              // skip malformed chunks
-            }
-          }
-        }
+    for await (const item of streamingResult.stream) {
+      const chunkText = item.candidates[0].content.parts[0].text;
+      if (chunkText) {
+        res.write(`data: ${JSON.stringify({ token: chunkText })}\n\n`);
       }
     }
+    
+    res.write('data: [DONE]\n\n');
   } catch (err) {
+    console.error('Vertex AI Error:', err);
     res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
   } finally {
     res.end();
