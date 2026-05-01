@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteWise | AI Election Assistant</title>
+    <meta name="description" content="Personalized AI guidance for the Indian election process.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>VoteWise</h1>
+            <p>Your AI Guide to Voting in India</p>
+        </header>
+
+        <main id="main-content">
+            <!-- Onboarding Form -->
+            <section id="onboarding" class="card">
+                <h2>Let's get started</h2>
+                <p>Provide a few details for personalized guidance.</p>
+                <form id="onboarding-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="e.g. John Doe" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" required min="1" max="120" placeholder="e.g. 21">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State / UT</label>
+                        <select id="state" required>
+                            <option value="" disabled selected>Select your state</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Puducherry">Puducherry</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Are you registered to vote?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="registered" value="yes"> Yes</label>
+                            <label><input type="radio" name="registered" value="no" checked> No / Not Sure</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">Start Chat</button>
+                </form>
+            </section>
+
+            <!-- Chat Interface (Hidden by default) -->
+            <section id="chat-container" class="card hidden">
+                <div class="chat-header">
+                    <button id="exit-btn" class="btn-text">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+                        </svg>
+                        Exit
+                    </button>
+                    <span class="status-dot"></span>
+                </div>
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message assistant">
+                        <div class="bubble">Hello! I'm VoteWise. How can I help you today?</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <form id="chat-form">
+                        <input type="text" id="user-input" placeholder="Ask a question..." autocomplete="off">
+                        <button type="submit" id="send-btn">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2026 VoteWise. Not an official government app.</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
