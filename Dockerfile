@@ -1,23 +1,23 @@
-# Use Node.js 20 Alpine as base image
+# Use Node.js 20 Alpine
 FROM node:20-alpine
-
-# Set to production
-ENV NODE_ENV=production
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first for better caching
+# Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
+# Install only production deps
 RUN npm install --omit=dev
 
-# Copy the rest of the application code
+# Copy app code
 COPY . .
 
-# Expose port 8080 (Cloud Run expected port)
+# Cloud Run requires this env
+ENV PORT=8080
+
+# Expose port
 EXPOSE 8080
 
-# Start the application
+# Start app
 CMD ["node", "src/server.js"]
